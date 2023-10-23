@@ -16,7 +16,7 @@ To get started with GameHub, follow these steps:
 4. Add the API key to **src/services/api-client.ts**
 5. Run `npm run dev` to start the web server.
 
-## Backlog for the future
+## Todo
 - Hide the API key from each request with a separate back-end server
 - Caching
 - Infinite scrolling
