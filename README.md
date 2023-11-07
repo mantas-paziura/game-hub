@@ -2,7 +2,7 @@
 
 Video game discovery web app that helps you find new and interesting games to play. You can search for games by platform, genre, and more. 
 
-This project was built while following an online course for the purpose of learning React, Typescript and Chakra UI.
+This project was built for the purpose of learning React, Typescript, Chakra UI, React Query, zustand, React Router and more.
 
 https://game-hub-mantas.vercel.app/
 
@@ -15,9 +15,3 @@ To get started with GameHub, follow these steps:
 3. Get a RAWG API key at https://rawg.io/apidocs. You'll have to create an account first. 
 4. Add the API key to **src/services/api-client.ts**
 5. Run `npm run dev` to start the web server.
-
-## Todo
-- Hide the API key from each request with a separate back-end server
-- Caching
-- Infinite scrolling
-- Game details page
