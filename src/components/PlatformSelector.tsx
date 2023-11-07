@@ -1,15 +1,15 @@
-import { Menu, MenuButton, Button, MenuList, MenuItem } from '@chakra-ui/react';
-import { BsChevronDown } from 'react-icons/bs';
 import { CheckIcon } from '@chakra-ui/icons';
-import usePlatforms, { Platform } from '../hooks/usePlatforms';
+import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { BsChevronDown } from 'react-icons/bs';
+import usePlatform from '../hooks/usePlatform';
+import usePlatforms from '../hooks/usePlatforms';
+import useGameQueryStore from '../store';
 
-interface Props {
-  selectedPlatform: Platform | null;
-  onSelectPlatform: (platform: Platform | null) => void;
-}
-
-function PlatformSelector({ selectedPlatform, onSelectPlatform }: Props) {
+function PlatformSelector() {
+  const selectedPlatformId = useGameQueryStore((s) => s.gameQuery.platformId);
+  const setPlatformId = useGameQueryStore((s) => s.setPlatformId);
   const { data, error } = usePlatforms();
+  const selectedPlatform = usePlatform(selectedPlatformId);
 
   if (error) return null;
 
@@ -19,11 +19,16 @@ function PlatformSelector({ selectedPlatform, onSelectPlatform }: Props) {
         {selectedPlatform?.name || 'Platforms'}
       </MenuButton>
       <MenuList>
-        {selectedPlatform && <MenuItem onClick={() => onSelectPlatform(null)}>All platforms</MenuItem>}
-        {data.map((platform) => {
-          const isSelected = selectedPlatform === platform;
+        {selectedPlatformId && (
+          <MenuItem onClick={() => setPlatformId(undefined)}>All platforms</MenuItem>
+        )}
+        {data?.results.map((platform) => {
+          const isSelected = selectedPlatformId === platform.id;
           return (
-            <MenuItem key={platform.id} onClick={() => onSelectPlatform(isSelected ? null : platform)}>
+            <MenuItem
+              key={platform.id}
+              onClick={() => setPlatformId(isSelected ? undefined : platform.id)}
+            >
               {platform.name}
               {isSelected && <CheckIcon ml={2} color='green.400' />}
             </MenuItem>

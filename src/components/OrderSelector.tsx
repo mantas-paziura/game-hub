@@ -1,13 +1,12 @@
-import { Menu, MenuButton, Button, MenuList, MenuItem, Text } from '@chakra-ui/react';
+import { Button, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { BsChevronDown } from 'react-icons/bs';
-import { Order } from '../hooks/useGames';
+import Order from '../entities/Order';
+import useGameQueryStore from '../store';
 
-interface Props {
-  selectedOrder: Order | null;
-  onSelectOrder: (order: Order) => void;
-}
+function OrderSelector() {
+  const selectedOrder = useGameQueryStore((s) => s.gameQuery.order);
+  const setOrder = useGameQueryStore((s) => s.setOrder);
 
-function OrderSelector({ selectedOrder, onSelectOrder }: Props) {
   const orders: Order[] = [
     { label: 'Popularity', field: 'added', reverse: true },
     { label: 'Date added', field: 'created', reverse: true },
@@ -25,9 +24,9 @@ function OrderSelector({ selectedOrder, onSelectOrder }: Props) {
         </Text>
       </MenuButton>
       <MenuList>
-        {orders.map((menuItem) => (
-          <MenuItem key={menuItem.field} onClick={() => onSelectOrder(menuItem)}>
-            {menuItem.label}
+        {orders.map((order) => (
+          <MenuItem key={order.field} onClick={() => setOrder(order)}>
+            {order.label}
           </MenuItem>
         ))}
       </MenuList>

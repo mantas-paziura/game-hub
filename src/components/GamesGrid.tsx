@@ -1,32 +1,41 @@
-import { Text, SimpleGrid } from '@chakra-ui/react';
-import { GameQuery } from '../App';
+import { SimpleGrid } from '@chakra-ui/react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import useGames from '../hooks/useGames';
-import GameCard from './GameCard';
-import GameCardSkeleton from './GameCardSkeleton';
+import useGameQueryStore from '../store';
 import ErrorAlert from './ErrorAlert';
+import GameCard from './GameCard';
+import GameCardSkeletons from './GameCardSkeletons';
+import NoSearchResults from './NoSearchResults';
 
-interface Props {
-  gameQuery: GameQuery;
-}
+function GamesGrid() {
+  const searchText = useGameQueryStore((s) => s.gameQuery.searchText);
+  const { data, error, fetchNextPage, hasNextPage, isFetching } = useGames();
+  const fetchedGamesCount =
+    data?.pages.reduce((total, page) => total + page.results.length, 0) || 0;
 
-function GamesGrid({ gameQuery }: Props) {
-  const { data, error, isLoading } = useGames(gameQuery);
-  const skeletonsAmount = 8;
-  const skeletons = [...Array(skeletonsAmount).keys()];
+  if (error) {
+    return <ErrorAlert message={error.message} />;
+  }
 
-  if (error) return <ErrorAlert message={error} />;
-
-  if (!isLoading && gameQuery.searchText?.length > 0 && data.length === 0)
-    return <Text my={6}>Sorry, we couldn't find any results for '{gameQuery.searchText}'</Text>;
+  if (!isFetching && (searchText || '').length > 0 && fetchedGamesCount === 0)
+    return <NoSearchResults />;
 
   return (
-    <SimpleGrid my={8} gap={5} columns={{ md: 2, lg: 3, xl: 4 }}>
-      {isLoading && skeletons.map((n) => <GameCardSkeleton key={n} />)}
-
-      {data.map((game) => (
-        <GameCard game={game} key={game.id} />
-      ))}
-    </SimpleGrid>
+    <InfiniteScroll
+      dataLength={fetchedGamesCount}
+      hasMore={hasNextPage}
+      next={() => fetchNextPage()}
+      loader={<></>}
+      style={{ overflow: 'visible' }}
+    >
+      <SimpleGrid mb={5} gap={5} columns={{ md: 2, lg: 3, xl: 4 }}>
+        {data?.pages.map((page) => {
+          return page.results.map((game) => <GameCard game={game} key={game.id} />);
+        })}
+        {isFetching && <GameCardSkeletons amount={8} />}
+      </SimpleGrid>
+    </InfiniteScroll>
   );
 }
+
 export default GamesGrid;

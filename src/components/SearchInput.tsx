@@ -1,38 +1,65 @@
-import { useRef } from 'react';
-import { InputGroup, InputLeftElement, Input, InputRightElement, IconButton } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
+import {
+  IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+} from '@chakra-ui/react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
+import useGameQueryStore from '../store';
 
-interface Props {
-  onSearch: (searchText: string) => void;
-}
-
-function SearchInput({ onSearch }: Props) {
-  const searchRef = useRef<HTMLInputElement>(null);
+function SearchInput() {
+  const navigate = useNavigate();
+  const searchText = useGameQueryStore((store) => store.gameQuery.searchText);
+  const setSearchText = useGameQueryStore((store) => store.setSearchText);
+  const [searchValue, setSearchValue] = useState('');
   const timerRef = useRef<number>();
 
-  const handleInput = () => {
+  useEffect(() => {
+    setSearchValue(searchText ?? '');
+  }, [searchText]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const searchText = e.target.value;
+    setSearchValue(searchText);
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
-      if (searchRef.current) onSearch(searchRef.current.value);
+      setSearchText(searchText);
+      navigate('/');
     }, 500);
   };
 
   const handleClear = () => {
-    if (searchRef.current) searchRef.current.value = '';
-    onSearch('');
+    setSearchValue('');
+    setSearchText('');
   };
 
   return (
     <InputGroup>
       <InputLeftElement pointerEvents='none' children={<BsSearch />} />
-      <Input ref={searchRef} variant='filled' rounded='xl' placeholder='Search games...' onInput={handleInput} />
-      {searchRef.current?.value && (
+      <Input
+        variant='filled'
+        rounded='xl'
+        placeholder='Search games...'
+        value={searchValue}
+        onChange={handleChange}
+      />
+      {searchValue && (
         <InputRightElement>
-          <IconButton variant='ghost' aria-label='Clear search' size='sm' icon={<CloseIcon />} onClick={handleClear} />
+          <IconButton
+            variant='ghost'
+            aria-label='Clear search'
+            size='sm'
+            icon={<CloseIcon />}
+            onClick={handleClear}
+          />
         </InputRightElement>
       )}
     </InputGroup>
   );
 }
+
 export default SearchInput;

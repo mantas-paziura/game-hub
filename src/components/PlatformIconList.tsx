@@ -1,11 +1,11 @@
 import { HStack, Icon } from '@chakra-ui/react';
-import { FaWindows, FaPlaystation, FaXbox, FaApple, FaLinux, FaAndroid } from 'react-icons/fa';
+import { IconType } from 'react-icons';
+import { BsGlobe } from 'react-icons/bs';
+import { FaAndroid, FaApple, FaLinux, FaPlaystation, FaWindows, FaXbox } from 'react-icons/fa';
+import { GiConsoleController } from 'react-icons/gi';
 import { MdPhoneIphone } from 'react-icons/md';
 import { SiAtari, SiCommodore, SiNintendo, SiSega } from 'react-icons/si';
-import { GiConsoleController } from 'react-icons/gi';
-import { BsGlobe } from 'react-icons/bs';
-import { IconType } from 'react-icons';
-import { Platform } from '../hooks/usePlatforms';
+import Platform from '../entities/Platform';
 
 interface Props {
   platforms: Platform[];
